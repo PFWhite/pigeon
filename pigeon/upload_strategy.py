@@ -60,6 +60,8 @@ class UploadStrategy(object):
         res = self.api.import_records(data=upload_data)
         if (res.status_code == 403):
             raise TooManyRecords(res.content)
+        if ('maximum submission size' in str(res.content, 'utf-8')):
+            raise TooManyRecords(res.content)
         data = self.__response_parse(res)
         if type(data) == type({}) and 'error' in data.keys():
             return self.__handle_errors(records, data, report)

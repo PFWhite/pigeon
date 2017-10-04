@@ -1,15 +1,17 @@
 docstr = """
 Pigeon
 
-Usage: pigeon.py [-h] (<file> <config>) [-o <output.json>]
+Usage: pigeon.py [-hc] (<file> <config>) [-o <output.json>]
 
 Options:
   -h --help                                     show this message and exit
   -o <output.json> --output=<output.json>       optional output file for results
+  -c --csv                                      use csv as the import format
 
 """
 import json
 import datetime
+import csv
 from copy import copy
 
 from docopt import docopt
@@ -37,7 +39,7 @@ def main(args):
         global config
         config = yaml.load(config_file.read())
     with open(args[_file], 'r') as infile:
-        records_json = infile.read()
+        records_str = infile.read()
 
     api = cappy.API(config[_tk], config[_ru], config[_cv], requests_options=config.get(_ro))
 
@@ -57,7 +59,12 @@ def main(args):
         'strategy_used': "",
     }
 
-    records = json.loads(records_json)
+    with open(args[_file], 'r') as infile:
+        if args.get('--csv'):
+            records = list(csv.DictReader(infile))
+        else:
+            records_json = infile.read()
+            records = json.loads(records_json)
     report = Reporter('pigeon_v1', report_template)
     full_upload = UploadStrategy('full', api)
     batch_upload = UploadStrategy('batch', api)
