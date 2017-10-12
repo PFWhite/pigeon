@@ -4,18 +4,23 @@ from copy import copy
 
 from pigeon.exceptions import *
 import pigeon.redcap_errors as redcap_errors
+from pigeon.record_holder import RecordHolder
 
 class UploadStrategy(object):
 
-    def __init__(self, strategy, api):
+    def __init__(self, strategy, api, submit_format='csv'):
         """
         Strategies are
         'full'
         'batch'
         'single'
+
+        submit_format determines the way that the file will be submitted to
+        redcap. csv is recommended since its what redcap knows best
         """
         self.strategy = strategy
         self.api = api
+        self.submit_format = submit_format
 
     def __call__(self, records, report, **upload_kwargs):
         self.upload_kwargs = upload_kwargs
@@ -56,8 +61,12 @@ class UploadStrategy(object):
         """
         Takes records and a Reporter instance
         """
-        upload_data = json.dumps(records)
-        res = self.api.import_records(data=upload_data)
+        records = RecordHolder(records)
+        upload_data = records.dump(dump_format=self.submit_format)
+        res = self.api.import_records(data=upload_data,
+                                      adhoc_redcap_options={
+                                          'format': self.submit_format
+                                      })
         if (res.status_code == 403):
             raise TooManyRecords(res.content)
         if ('maximum submission size' in str(res.content, 'utf-8')):
@@ -70,7 +79,7 @@ class UploadStrategy(object):
             report.strategy_used = 'full'
             return records, report
 
-    def __batch_upload(self, records, report, batch_size=500):
+    def __batch_upload(self, records, report, batch_size=2000):
         batches = [[]]
         unfilled_batch = 0
         for record in records:

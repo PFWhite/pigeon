@@ -33,6 +33,7 @@ _tk = 'token'
 _ru = 'redcap_url'
 _ro = 'requests_options'
 _bs = 'batch_size'
+_sf = 'submit_format'
 
 def main(args):
     with open(args[_config], 'r') as config_file:
@@ -41,7 +42,7 @@ def main(args):
     with open(args[_file], 'r') as infile:
         records_str = infile.read()
 
-    api = cappy.API(config[_tk], config[_ru], config[_cv], requests_options=config.get(_ro))
+    api = cappy.API(config[_tk], config[_ru], config.get(_cv) or 'master.yaml', requests_options=config.get(_ro))
 
     report_template = {
         'file_loaded': args[_file],
@@ -63,16 +64,13 @@ def main(args):
         if args.get('--csv'):
             records = list(csv.DictReader(infile))
         else:
-            records_json = infile.read()
-            records = json.loads(records_json)
+            records = json.load(infile)
     report = Reporter('pigeon_v1', report_template)
-    full_upload = UploadStrategy('full', api)
     batch_upload = UploadStrategy('batch', api)
     single_upload = UploadStrategy('single', api)
 
-    upload = RiskManager(lambda : full_upload(records, report))
-    upload.add_backup(lambda ex: batch_upload(records, report.reset().add_key_value('full_ex', ex)))
-    upload.add_backup(lambda ex: single_upload(records, report.reset().add_key_value('batch_ex', ex)))
+    upload = RiskManager(lambda : batch_upload(records, report))
+    upload.add_backup(lambda ex: single_upload(records, report.reset().add_key_value('full_ex', ex)))
 
     result, ran_out_of_plans = upload()
 
