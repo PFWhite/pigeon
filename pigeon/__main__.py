@@ -87,7 +87,11 @@ def main(args):
     if ran_out_of_plans:
         report.add_key_value('exceptions', [ex for ex in upload.exceptions_encountered])
 
-    print(report.serialize())
+    if not args.get(_output):
+        print(report.serialize())
+    else:
+        with open(args.get(_output), 'w') as outfile:
+            outfile.write(report.serialize())
 
 def cli_run():
     args = docopt(docstr)
