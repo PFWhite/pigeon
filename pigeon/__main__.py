@@ -2,10 +2,11 @@ docstr = """
 Pigeon
 
 Usage: pigeon.py [-hc] (<file> <config>) [-o <output.json>]
+pigeon.py [-hc] (<file> <token> <url>) [-o <output.json>]
 
 Options:
   -h --help                                     show this message and exit
-  -o <output.json> --output=<output.json>       optional output file for results
+  -o=<output.json> --output=<output.json>       optional output file for results
   -c --csv                                      use csv as the import format
 
 """
@@ -26,6 +27,8 @@ from .risk_manager import RiskManager
 _file = '<file>'
 _config = '<config>'
 _output = '--output'
+_token = '<token>'
+_url = '<url>'
 
 # config file magic strings
 _cv = 'cappy_version'
@@ -36,9 +39,16 @@ _bs = 'batch_size'
 _sf = 'submit_format'
 
 def main(args):
-    with open(args[_config], 'r') as config_file:
-        global config
-        config = yaml.load(config_file.read())
+    global config
+    if args.get(_config):
+        with open(args[_config], 'r') as config_file:
+            config = yaml.load(config_file.read())
+    else:
+        config = {
+            _ru: args.get(_url),
+            _tk: args.get(_token),
+        }
+
     with open(args[_file], 'r') as infile:
         records_str = infile.read()
 
