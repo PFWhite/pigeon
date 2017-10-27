@@ -1,4 +1,5 @@
 import json
+import time
 import datetime
 from copy import copy
 
@@ -79,7 +80,7 @@ class UploadStrategy(object):
             report.strategy_used = 'full'
             return records, report
 
-    def __batch_upload(self, records, report, batch_size=2000):
+    def __batch_upload(self, records, report, batch_size=2000, between_batch_delay=5):
         batches = [[]]
         unfilled_batch = 0
         for record in records:
@@ -87,7 +88,10 @@ class UploadStrategy(object):
                 batches.append([])
                 unfilled_batch += 1
             batches[unfilled_batch].append(record)
-        rec_reports = [self.__full_upload(batch, report) for batch in batches]
+        rec_reports = []
+        for batch in batches:
+            rec_reports.append(self.__full_upload(batch, report))
+            time.sleep(between_batch_delay)
         report.num_of_batches = len(batches)
         report.strategy_used = 'batch'
         altered_batches = [rec for rec, report in rec_reports]
