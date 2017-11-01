@@ -1,3 +1,21 @@
+## [1.2.0] - 2017-10-26
+### Summary
+ * This release sets specific versions for dependencies and updates on docopt
+	works
+### Added
+ * create a entry point function for docopts to work better (Matthew McConnell)
+ * add a specific reqs files for devs (Matthew McConnell)
+ * added version file and updated references to it (Matthew McConnell)
+
+### Changed
+ * made dependencies have specific version, and changed license (Matthew McConnell)
+
+## [1.1.0] - 2017-08-14
+Quick update to get CTSI Repo up to date
+### Added
+ * updated CHANGELOG and setup for release 0.1.0 (Matthew McConnell)
+ * Add an AUTHORS and TODO file, and update the license to apache 2.0 (Matthew McConnell)
+
 ## [1.0.0] - 2017-07-17
 ### Initial release
  * add better error handling and reporting (Patrick White)
@@ -7,4 +25,24 @@
  * updated example config with batching parameter (Patrick White)
  * Batching is now working (Patrick White)
  * changes to make pigeon a commandline tool (Patrick White)
+
+## [0.1.0] - 2017-05-17
+### Summary
+ * This is the first release.
+
+### Added
+ * Add an AUTHORS and TODO file, and update the license to apache 2.0 (Matthew McConnell)
+ * finish refactor (Patrick White)
+ * introduces modules for reporting and uploading (Patrick White)
+ * fixing errors with hcv projects (Patrick White)
+ * fixing docopt usage to allow for unit testing (Patrick White)
+ * fix string casting (Patrick White)
+ * updated example config with batching parameter (Patrick White)
+ * removing debug statement (Patrick White)
+ * Batching is now working (Patrick White)
+ * redcap does bad things (Patrick White)
+ * pigeon is smarter when it runs into errors (Patrick White)
+ * changes to make pigeon a commandline tool (Patrick White)
+ * fixed some packaging issues (Patrick White)
+ * files added (Patrick White)
  * Initial commit (PFWhite)
