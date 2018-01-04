@@ -15,6 +15,7 @@ import json
 import datetime
 import csv
 from copy import copy
+import os
 
 from docopt import docopt
 import yaml
@@ -57,7 +58,7 @@ def main(args):
     api = cappy.API(config[_tk], config[_ru], config.get(_cv) or 'master.yaml', requests_options=config.get(_ro))
 
     report_template = {
-        'file_loaded': args[_file],
+        'file_loaded': os.path.abspath(args[_file]),
         'num_records_attempted': 0,
         'num_subjects_uploaded': 0,
         'num_records_uploaded': 0,
