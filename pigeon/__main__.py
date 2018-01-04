@@ -88,10 +88,9 @@ def main(args):
     upload = RiskManager(lambda : batch_upload(records, report))
     upload.add_backup(lambda ex: single_upload(records, report.reset().add_key_value('full_ex', ex)))
 
-    result, ran_out_of_plans = upload()
+    result, successful_plan = upload()
 
-    if ran_out_of_plans:
-        report.add_key_value('exceptions', [ex for ex in upload.exceptions_encountered])
+    report.add_key_value('exceptions', [ex for ex in upload.exceptions_encountered])
 
     if not args.get(_output):
         print(report.serialize())
