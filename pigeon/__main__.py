@@ -63,6 +63,7 @@ def main(args):
         'num_records_uploaded': 0,
         'num_of_errors': 0,
         'subjects_uploaded': [],
+        'original_errors': [],
         'errors': [],
         'error_correction_attempts': 0,
         'fields_updated': 0,
@@ -77,7 +78,9 @@ def main(args):
             records = list(csv.DictReader(infile))
         else:
             records = json.load(infile)
-    report = Reporter('pigeon_v1', report_template)
+    report = Reporter('pigeon_v1', report_template, no_reset=[
+        'original_errors'
+    ])
     batch_upload = UploadStrategy('batch', api)
     single_upload = UploadStrategy('single', api)
 

@@ -42,8 +42,13 @@ class UploadStrategy(object):
         return json.loads(text)
 
     def __handle_errors(self, records, data, report):
+        """
+        Here we try to deal with any errors that may happen.
+        """
         report.error_correction_attempts += 1
-        errors = redcap_errors.parse_errors(data.get('error'))
+        error_value = data.get('error')
+        report.original_errors.append(error_value)
+        errors = redcap_errors.parse_errors(error_value)
         for error in errors:
             report.errors.append(copy(error))
         report.num_of_errors += len(errors)
