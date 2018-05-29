@@ -1,4 +1,5 @@
 import json
+import sys
 from .exceptions import *
 
 def clean_error(error):
@@ -25,6 +26,7 @@ def parse_errors(error_data):
     that there is something brand new that is a problem and will need to be
     addressed in a code change.
     """
+    print(error_data, file=sys.stderr)
     if 'There were errors with your request.' in error_data:
         raise KnownParseError(error_data)
     if 'data being misformatted' in error_data:
