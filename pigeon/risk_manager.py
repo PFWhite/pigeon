@@ -35,11 +35,12 @@ class RiskManager(object):
 
         for attempted_plan, plan in enumerate( self.plans ):
             try:
-                if plan == first_plan:
+                if attempted_plan == 0:
                     result = plan()
                 else:
                     result = plan(self.exceptions_encountered[-1])
                 successful_plan = attempted_plan
+                break
             except Exception as ex:
                 self.exceptions_encountered.append(format_exc())
 
